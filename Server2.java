@@ -21,11 +21,11 @@ class Server2
         int portNum = Integer.parseInt(cons.readLine("Enter a port number: "));
         int numberOrder;
         Packet[] window;
-      	public Server(){
+      	public Server2(){
 	
 		try
 		{
-			window = new FilePacket[windowSize];
+			window = new Packet[windowSize];
 			socket = new DatagramSocket(portNum);
 			byte[] incomingData = new byte[1024];
 
