@@ -22,7 +22,7 @@ class Client2
         File file;
 	Packet[] window;
 	final int windowSize = 5;
-	public Client() {
+	public Client2() {
 
 		try
 		{
