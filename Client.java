@@ -21,7 +21,8 @@ class Client
 		
 		try
 		{
-			DatagramChannel dc = DatagramChannel.open();
+			DatagramSocket clientSocket = new DatagramSocket();
+			InetAddress ipAddress = InetAddress.getByName(ipAddr);
 			
 			System.out.println("");
 			System.out.println("Commands: 'exit', 'send <filename>'");
@@ -40,8 +41,10 @@ class Client
 				else if(userInput.substring(0, 4).toLowerCase().equals("send"))
 				{
 					//Send file request to server
-					ByteBuffer buffer = ByteBuffer.wrap(userInput.getBytes());
-					dc.send(buffer, new InetSocketAddress(ipAddr, portNum));
+					byte[] sendData = new byte[1024];
+					sendData = userInput.getBytes();
+					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portNum);
+					clientSocket.send(sendPacket);
 					
 					//receive file packets (1024 bytes each) and save to a new file
 					//Sliding window of 5 packets
@@ -52,7 +55,7 @@ class Client
 				}
 			}
 			
-			dc.close();
+			clientSocket.close();
 		}
 		catch(IOException e)
 		{

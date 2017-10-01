@@ -20,19 +20,23 @@ class Server
 		
 		try
 		{
-			DatagramChannel dc = DatagramChannel.open();
-			dc.bind(new InetSocketAddress(portNum));
+			DatagramSocket serverSocket = new DatagramSocket(portNum);
+			
 			while(true)
 			{
 				//Receive message from client
-				ByteBuffer buffer = ByteBuffer.allocate(10000);
-				SocketAddress clientaddr = dc.receive(buffer);
-				String clientSentence = new String(buffer.array());
-				System.out.println("From client: " + clientSentence);
-				String fileToSend = clientSentence.substring(5, clientSentence.length());
+				byte[] receiveData = new byte[1024];
+				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+				serverSocket.receive(receivePacket);
+				String sentence = new String(receivePacket.getData());
+				System.out.println("From client: " + sentence);
+				
+				String fileToSend = sentence.substring(5, sentence.length());
+				File myFile = new File(fileToSend);
 				
 				//Send file to client in packet sizes of 1024 bytes
 				//Sliding window of 5 packets
+				byte[] sendData = new byte[1024];
 			}
 		}
 		catch(IOException e)
