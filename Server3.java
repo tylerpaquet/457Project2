@@ -45,6 +45,6 @@ public class Server3 {
 		
 	}
 	public static void main(String[] args){
-		Server server = new Server(Integer.valueOf(args[0]));
+		Server3 server = new Server3(Integer.valueOf(args[0]));
 	}
 }
