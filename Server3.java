@@ -9,7 +9,7 @@ public class Server3 {
 	private InetAddress ipAddr;
 	private FileInputStream fis;
 	
-	public Server(int port){
+	public Server3(int port){
 		try {
 			System.out.println("Waiting for client connection");
 			socket = new DatagramSocket(port);
