@@ -2,13 +2,13 @@ import java.io.*;
 import java.net.*;
 import java.util.*;
 
-public class Client {
+public class Client3 {
 	private DatagramSocket socket;
 	private int portNum;
 	private InetAddress ipAddr;
 	private File file;
 	private FileOutputStream fos;
-	public Client(int port, String ip, String fileName){
+	public Client3(int port, String ip, String fileName){
 		try {
 			socket = new DatagramSocket();
 
@@ -35,6 +35,6 @@ public class Client {
 	}
 
 	public static void main(String[] args){
-		Client client = new Client(Integer.valueOf(args[0]), args[1],args[2]);
+		Client3 client = new Client3(Integer.valueOf(args[0]), args[1],args[2]);
 	}
 }
