@@ -29,6 +29,7 @@ class Client
 			
 			while(true)
 			{
+				System.out.println("");
 				String userInput = cons.readLine("Enter your command: ");
 				if(userInput.equals("exit"))
 				{
@@ -38,28 +39,32 @@ class Client
 				{
 					System.out.println("That is not a known command");
 				}
+				else if(userInput.length() == 4 && userInput.equals("send"))
+				{
+					System.out.println("Must include filename to download");
+				}
 				else if(userInput.substring(0, 4).toLowerCase().equals("send"))
 				{
-					//Send file request to server
+					
+				//Send file request to server
 					byte[] sendData = new byte[userInput.length()];
 					sendData = userInput.getBytes();
 					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portNum);
 					clientSocket.send(sendPacket);
 					
 					
-					//Receive File Size from Server
+				//Receive File Size from Server
 					byte[] receiveFileSize = new byte[1024];
 					DatagramPacket receiveFileSizePacket = new DatagramPacket(receiveFileSize, receiveFileSize.length);
 					clientSocket.receive(receiveFileSizePacket);
 					String fileSize = new String(receiveFileSizePacket.getData());
 					int length = receiveFileSizePacket.getLength();
 					String fileSize2 = fileSize.substring(0, length);
-					//System.out.println("File size string: " + fileSize);
 					int fileSizeInt = Integer.parseInt(fileSize2);
 					//System.out.println("File size int: " + fileSizeInt); //prints file size in bytes
 					
 					
-					//receive file packets and save to a new file
+				//receive file packets and save to a new file
 					int numPackets = ((int)fileSizeInt/1024) + 1;
 					int numBytesLastPacket = (int)fileSizeInt%1024;
 					//System.out.println("Number of packets = " + numPackets);

@@ -25,11 +25,13 @@ class Server
 			
 			while(true)
 			{
-				//Receive message from client
+				
+			//Receive message from client
 				byte[] receiveData = new byte[1024];
 				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 				serverSocket.receive(receivePacket);
 				String sentence = new String(receivePacket.getData());
+				System.out.println("");
 				System.out.println("From client: " + sentence);
 				
 				int length = receivePacket.getLength();
@@ -44,7 +46,7 @@ class Server
 				//System.out.println("File size: " + fileSize);
 				
 	
-				//Send file size to client
+			//Send file size to client
 				String fileSizeStr = Long.toString(fileSize);
 				byte[] sendFileSize = new byte[fileSizeStr.length()];
 				sendFileSize = fileSizeStr.getBytes();
@@ -52,7 +54,7 @@ class Server
 				serverSocket.send(sendFileSizePacket);
 				
 				
-				//Send file to client in packet sizes of 1024 bytes Sliding window of 5 packets
+			//Send file to client in packet sizes of 1024 bytes Sliding window of 5 packets
 				
 				int numPackets = ((int)fileSize/1024) + 1;
 				int numBytesLastPacket = (int)fileSize%1024;
@@ -86,6 +88,8 @@ class Server
 					serverSocket.receive(receivePacket);		
 						
 				}
+				System.out.println("All packets have been sent");
+				System.out.println("");
 				
 			}
 		}
