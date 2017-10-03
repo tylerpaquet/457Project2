@@ -64,6 +64,8 @@ class Server
 				//byte[] fileData = new byte[(int)fileSize];
 				//fis.read(fileData);
 				//int offset = 0;
+				
+				System.out.println("File will be sent in " + numPackets + " packets");
 					
 				for(int i = 0; i < numPackets; i++)
 				{
