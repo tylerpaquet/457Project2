@@ -60,36 +60,68 @@ class Server
 				int numBytesLastPacket = (int)fileSize%1024;
 				//System.out.println("Number of packets = " + numPackets);
 				//System.out.println("Number of bytes in final packet = " + numBytesLastPacket);
-					
-				//byte[] fileData = new byte[(int)fileSize];
-				//fis.read(fileData);
-				//int offset = 0;
 				
 				System.out.println("File will be sent in " + numPackets + " packets");
-					
-				for(int i = 0; i < numPackets; i++)
+				
+				int packetsSent = 0;
+				int acksReceived = 0;
+				
+				while(packetsSent < numPackets)
 				{
-					System.out.println("Sending Packet #" + (i+1) + "/" + numPackets);
-					if(i == numPackets - 1)
+					while(packetsSent < 5 && packetsSent != numPackets)
+					{
+						byte[] sendData = new byte[1024];
+						fis.read(sendData);
+						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portnumber);
+						System.out.println("Sending packet #" + (packetsSent+1));
+						serverSocket.send(sendPacket);
+						packetsSent++;
+					}
+					
+					byte[] ack = new byte[1024];
+					DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
+					serverSocket.receive(receiveAck);
+					System.out.println("Received ack");
+					acksReceived++;
+					
+					//if file was sent in 5 packets or less then ignore following if else
+					if(packetsSent == numPackets)
+					{
+						break;
+					}
+					
+					if(packetsSent == numPackets - 1)
 					{
 						byte[] sendData = new byte[numBytesLastPacket];
 						fis.read(sendData);
 						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portnumber);
+						System.out.println("Sending packet #" + (packetsSent+1));
 						serverSocket.send(sendPacket);
+						packetsSent++;
 					}
 					else
 					{
 						byte[] sendData = new byte[1024];
 						fis.read(sendData);
 						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portnumber);
+						System.out.println("Sending packet #" + (packetsSent+1));
 						serverSocket.send(sendPacket);
+						packetsSent++;
 					}
-						
+					
+					
+				}
+				
+				//Consume extra acks
+				while(acksReceived < packetsSent)
+				{
 					byte[] ack = new byte[1024];
 					DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
-					serverSocket.receive(receivePacket);		
-						
+					serverSocket.receive(receiveAck);
+					System.out.println("Received ack");
+					acksReceived++;
 				}
+				
 				System.out.println("All packets have been sent");
 				System.out.println("");
 				

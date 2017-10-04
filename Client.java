@@ -73,9 +73,6 @@ class Client
 					File file = new File("downloaded" + userInput.substring(5, userInput.length()));
 					FileOutputStream fos = new FileOutputStream(file);
 						
-					byte[] fileData = new byte[fileSizeInt];
-					int offset = 0;
-						
 					for(int i = 0; i < numPackets; i++)
 					{
 						System.out.println("Receiving Packet #" + (i+1) + "/" + numPackets);
@@ -95,10 +92,11 @@ class Client
 							fos.write(receiveData);
 						}
 							
-						String ackStr = "received packet " + (i+1); 
+						String ackStr = "received packet"; 
 						byte[] ack = new byte[ackStr.length()];
 						ack = ackStr.getBytes();
 						DatagramPacket sendAck = new DatagramPacket(ack, ack.length, ipAddress, portNum);
+						System.out.println("Sending ack for packet #" + (i+1));
 						clientSocket.send(sendAck);
 							
 					}
