@@ -18,31 +18,45 @@ public class CustomPacket {
 		this.packet = packet;
 
 		finalPacket = new byte[1024];
-		
 		//change server and client side to read and write packets of size [1014]
 		
 		//convert sequenceNum to bytes sequenceNum, add to "finalPacket"
-		convertSequenceNumToBytes();
+		SequenceNumToBytes();
 		//convert int id to bytes id, add to "finalPacket"
-		convertIdToBytes();
+		IdToBytes();
 		//add "packetData" to the end of the "finalPacket"
-		for( int i = 0; i <data.length-8;i++) {
-		finalPacket[i+8]=data[i];	
+		for( int i = 0; i <packetData.length-8;i++) {
+		finalPacket[i+8]=packetData[i];	
 		}
 		
-		//packet.setData(finalPacket);
+		packet.setData(finalPacket);
 	}
-	 
+	//Client constructor for CustomPacket 
 	public CustomPacket(DatagramPacket packet) {
 		this.packet = packet;
-		//methods for constrcution
-		// convert id bytes to id int
 		// convert sequenceNum bytes to sequenceNum int
-
+		setSequenceNum();
+		// convert id bytes to id int, set to packet
+		setId();
+	}
+	public int bytesToInt( byte[] bytes) {
+		return bytes[3] & 0xFF | 
+			(bytes[2] & 0xFF) << 8 |
+			(bytes[1] & 0xFF) << 16 |
+			(bytes[0] & 0xFF) << 24;
 	}
 	
+	public void setSequenceNum() {
+		byte[] bytes = Arrays.copyOfRange(packet.getData(),0,4);
+		sequenceNum = bytesToInt(bytes);
+	}
 	
-	public void convertSequenceNumToBytes() {
+	 public void setId() {
+                byte[] bytes = Arrays.copyOfRange(packet.getData(),4,8);
+                id = bytesToInt(bytes);
+        }	
+	
+	public void SequenceNumToBytes() {
                 byte[] bytes = new byte[4];
                 bytes[3] = (byte) (sequenceNum & 0xFF);
                 bytes[2] = (byte) ((sequenceNum >> 8) & 0xFF);
@@ -54,7 +68,7 @@ public class CustomPacket {
                 }
         }
 
-	public void convertIdToBytes() {
+	public void IdToBytes() {
 		byte[] bytes = new byte[4];
 		bytes[3] = (byte) (id & 0xFF);
 		bytes[2] = (byte) ((id >> 8) & 0xFF);
@@ -64,5 +78,19 @@ public class CustomPacket {
 		{
 			this.finalPacket[i+4] = bytes[i];
 		}
+	}
+	public byte[] getPacketData() {
+
+	byte[] bytes = Arrays.copyOfRange(packet.getData(),8, 1024);
+	return bytes;
+	}
+
+	public int getId() {
+
+	return id;
+	}
+	public int getSequenceNUmber() {
+
+	return sequenceNum;
 	}
 }
