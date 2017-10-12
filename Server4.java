@@ -69,6 +69,7 @@ class Server4
 				int acksReceived = 0;
 				int packetsSent = 0;
 				
+				//maybe restructure loops
 				while(packetsSent < numPackets)
 				{
 					//create window
