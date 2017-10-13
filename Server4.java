@@ -55,38 +55,71 @@ class Server4
 				
 				
 			//Send file to client in packet sizes of 1024 bytes Sliding window of 5 packets
-				
+				int windowSize = 5;
+
 				int numPackets = ((int)fileSize/1016) + 1;
 				int numBytesLastPacket = (int)fileSize%1016;
-				
+				int lastWindowSize = numPackets%windowSize;
+				int numWindows = numPackets/windowSize;
+				int lastWindow = numWindows+1;
+
 				System.out.println("File will be sent in " + numPackets + " packets");
 
-				final int windowSize = 5;
+		//		final int windowSize = 5;
 				CustomPacket[] window = new CustomPacket[windowSize];
 				int seq = 0;
 				int id = (int)(Math.random() * 100);
 				//need a better way of getting random id...
 				int acksReceived = 0;
 				int packetsSent = 0;
-				
+				int packetsRemaining = numPackets;
 				while(packetsSent < numPackets)
 				{
-					//create window
-					while(seq < windowSize && seq != numPackets)
-					{	
-						byte[] customData = new byte[1016];
-						fis.read(customData);	
-						byte[] sendData = new byte[1024];
-						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portnumber);
-						CustomPacket customPacket = new CustomPacket(seq, id, customData, sendPacket);
-						System.out.println("Sending packet #" + (packetsSent+1));
+				if(packetsRemaining >=5){
+				    for (int i = 0; i < windowSize; i++) {
+				            byte[] customData = new byte[1016];
+          				    fis.read(customData);
+         				    byte[] sendData = new byte[1024];
+     				            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portnumber);
+       					    CustomPacket customPacket = new CustomPacket(i, id, customData, sendPacket);        					    System.out.println("Sending packet #" + i);
+          				    window[i] = customPacket;
+					    serverSocket.send(window[i].packet);
+					    packetsSent++;
+					    packetsRemaining--;
+					    }
+				}
+				else {
+				    for (int i = 0; i < lastWindowSize; i++) {
+					    if(packetsRemaining >1) {
+                                            byte[] customData = new byte[1016];
+                                            fis.read(customData);
+                                            byte[] sendData = new byte[1024];
+                                            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portnumber);
+                                            CustomPacket customPacket = new CustomPacket(i, id, customData, sendPacket);                                                    System.out.println("Sending packet #" + i);
+                                            window[i] = customPacket;
+                                            serverSocket.send(window[i].packet);
+                                            packetsSent++;
+                                            packetsRemaining--;
+					    }
+					    else {
+ 						byte[] customData = new byte[numBytesLastPacket];
+                                                fis.read(customData);
+                                                byte[] sendData = new byte[numBytesLastPacket+8];
+                                                DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portnumber);
+                                                CustomPacket customPacket = new CustomPacket(seq, id, customData, sendPacket, numBytesLastPacket);
+                                                System.out.println("Sending packet #" + i);
+                                                window[i]=customPacket;
+                                                serverSocket.send(window[i].packet);
+                                                serverSocket.send(sendPacket);
+                                                packetsSent++;
+						packetsRemaining--;
+                                            }
+                                            }
+				}
 
-						window[seq] = customPacket;
-						serverSocket.send(window[seq].packet);
-						seq++;
-						packetsSent++;
-							
-					}
+				//	while(seq < windowSize && seq != numPackets)
+				//	{			
+				//	}
 					
 					byte[] ack = new byte[1024];
 					DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
@@ -99,27 +132,8 @@ class Server4
 					{
 						break;
 					}
-					
-					if(packetsSent == numPackets - 1)
-					{
-						byte[] sendData = new byte[numBytesLastPacket];
-						fis.read(sendData);
-						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portnumber);
-						System.out.println("Sending packet #" + (packetsSent+1));
-						serverSocket.send(sendPacket);
-						packetsSent++;
-					}
-					else
-					{
-						byte[] sendData = new byte[1024];
-						fis.read(sendData);
-						DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portnumber);
-						System.out.println("Sending packet #" + (packetsSent+1));
-						serverSocket.send(sendPacket);
-						packetsSent++;
-					}
-					
-					
+							
+							
 				}
 				
 				//Consume extra acks
@@ -143,4 +157,7 @@ class Server4
 			e.printStackTrace();
 		}
 	}
+	  
+	
+
 }
