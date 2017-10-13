@@ -69,7 +69,6 @@ class Server4
 				int acksReceived = 0;
 				int packetsSent = 0;
 				
-				//maybe restructure loops
 				while(packetsSent < numPackets)
 				{
 					//create window
@@ -83,15 +82,10 @@ class Server4
 						System.out.println("Sending packet #" + (packetsSent+1));
 
 						window[seq] = customPacket;
-						seq++;
-						//packetsSent++;
-						
-					}
-					//send window
-					while(seq < windowSize && seq !=numPackets) {
 						serverSocket.send(window[seq].packet);
 						seq++;
 						packetsSent++;
+							
 					}
 					
 					byte[] ack = new byte[1024];
