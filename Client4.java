@@ -73,16 +73,16 @@ class Client4
 						
 					for(int i = 0; i < numPackets; i++)
 					{
-						System.out.println("Receiving Packet #" + (i+1) + "/" + numPackets);
+					CustomPacket customPacket = null;
+						//System.out.println("Receiving Packet #" + (i+1) + "/" + numPackets);
 						if(i == numPackets - 1)
 						{
-							byte[] receiveData = new byte[numBytesLastPacket];								
+							byte[] receiveData = new byte[numBytesLastPacket+8];								
 							DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 							clientSocket.receive(receivePacket);
-							CustomPacket customPacket = new CustomPacket(receivePacket);
-                                                        fos.write(customPacket.getPacketData());
-
-							//fos.write(receiveData);
+							customPacket = new CustomPacket(receivePacket);
+							System.out.println("Got packet, sequence #"+customPacket.getSequenceNum());
+                                                        fos.write(customPacket.getLastPacketData(numBytesLastPacket+8));
 								
 						}
 						else
@@ -90,18 +90,29 @@ class Client4
 							byte[] receiveData = new byte[1024];
 							DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 							clientSocket.receive(receivePacket);
-							CustomPacket customPacket = new CustomPacket(receivePacket);
+							customPacket = new CustomPacket(receivePacket);
+							System.out.println("Got packet, sequence #"+customPacket.getSequenceNum());
 							fos.write(customPacket.getPacketData());
-						//	fos.write(receiveData);
 						}
-							
+												
+						int sequenceNum = customPacket.getSequenceNum();
+						byte[] bytes = new byte[ 4 ];
+						bytes[3] = (byte) (sequenceNum & 0xFF);
+						bytes[2] = (byte) ((sequenceNum >> 8) & 0xFF);
+						bytes[1] = (byte) ((sequenceNum >> 16) & 0xFF);
+						bytes[0] = (byte) ((sequenceNum >> 24) & 0xFF);
+						DatagramPacket ackPacket = new DatagramPacket( bytes, bytes.length, ipAddress, portNum);
+						System.out.println("Sending ack");
+						clientSocket.send(ackPacket);
+						
+						/*			
 						String ackStr = "received packet"; 
 						byte[] ack = new byte[ackStr.length()];
 						ack = ackStr.getBytes();
 						DatagramPacket sendAck = new DatagramPacket(ack, ack.length, ipAddress, portNum);
 						System.out.println("Sending ack for packet #" + (i+1));
 						clientSocket.send(sendAck);
-							
+						*/	
 					}
 					
 				}

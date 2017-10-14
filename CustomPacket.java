@@ -18,19 +18,35 @@ public class CustomPacket {
 		this.packet = packet;
 
 		finalPacket = new byte[1024];
-		//change server and client side to read and write packets of size [1014]
 		
-		//convert sequenceNum to bytes sequenceNum, add to "finalPacket"
 		SequenceNumToBytes();
-		//convert int id to bytes id, add to "finalPacket"
 		IdToBytes();
-		//add "packetData" to the end of the "finalPacket"
-		for( int i = 0; i <packetData.length-8;i++) {
+		for( int i = 0; i <packetData.length;i++) {
 		finalPacket[i+8]=packetData[i];	
 		}
 		
 		packet.setData(finalPacket);
 	}
+	//Server constructor for last packet sent 
+	public CustomPacket(int sequenceNum, int id, byte[] packetData, DatagramPacket packet, int lastPacketBytes) {
+                this.sequenceNum = sequenceNum;
+                this.id = id;
+                this.packetData = packetData;
+                this.packet = packet;
+
+                finalPacket = new byte[lastPacketBytes];
+		
+                SequenceNumToBytes();
+                IdToBytes();
+                for( int i = 0; i <packetData.length;i++) {
+                finalPacket[i+8]=packetData[i];
+                }
+
+                packet.setData(finalPacket);
+        }
+
+
+
 	//Client constructor for CustomPacket 
 	public CustomPacket(DatagramPacket packet) {
 		this.packet = packet;
@@ -84,12 +100,17 @@ public class CustomPacket {
 	byte[] bytes = Arrays.copyOfRange(packet.getData(),8, 1024);
 	return bytes;
 	}
+	public byte[] getLastPacketData(int size) {
+
+        byte[] bytes = Arrays.copyOfRange(packet.getData(),8, size);
+        return bytes;
+        }
 
 	public int getId() {
 
 	return id;
 	}
-	public int getSequenceNUmber() {
+	public int getSequenceNum() {
 
 	return sequenceNum;
 	}
