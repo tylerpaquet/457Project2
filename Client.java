@@ -99,14 +99,23 @@ class Client
 							fos.write(customPacket.getPacketData());
 						}
 						
-							
+						/*	
 						String ackStr = "received packet"; 
 						byte[] ack = new byte[ackStr.length()];
 						ack = ackStr.getBytes();
 						DatagramPacket sendAck = new DatagramPacket(ack, ack.length, ipAddress, portNum);
 						System.out.println("Sending ack for packet #" + customPacket.getId());
 						clientSocket.send(sendAck);
-							
+						*/
+						int sequenceNum = customPacket.getId();
+						byte[] bytes = new byte[ 4 ];
+						bytes[3] = (byte) (sequenceNum & 0xFF);
+						bytes[2] = (byte) ((sequenceNum >> 8) & 0xFF);
+						bytes[1] = (byte) ((sequenceNum >> 16) & 0xFF);
+						bytes[0] = (byte) ((sequenceNum >> 24) & 0xFF);
+						DatagramPacket ackPacket = new DatagramPacket( bytes, bytes.length, ipAddress, portNum);
+						System.out.println("Sending ack for packet # "+ customPacket.getId());
+						clientSocket.send(ackPacket);	
 					}
 					
 				}

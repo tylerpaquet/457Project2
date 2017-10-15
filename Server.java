@@ -103,12 +103,21 @@ class Server
 						serverSocket.send(customPacket.packet);
 						packetsSent++;
 					}
-					
+					/*
 					byte[] ack = new byte[1016];
 					DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
 					serverSocket.receive(receiveAck);
 					System.out.println("Received ack");
 					acksReceived++;
+					*/
+					
+					byte[] ack = new byte[4];
+                                        DatagramPacket recAck = new DatagramPacket(ack, ack.length);
+                                        serverSocket.receive(recAck);
+                                        int ackNum = bytesToInt(ack);
+					System.out.println("received ack for sequence # " + ackNum);
+				
+				        acksReceived++;
 					
 					//if file was sent in 5 packets or less then ignore following if else
 					if(packetsSent == numPackets)
@@ -145,10 +154,15 @@ class Server
 				//Consume extra acks
 				while(acksReceived < packetsSent)
 				{
-					byte[] ack = new byte[1016];
-					DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
-					serverSocket.receive(receiveAck);
-					System.out.println("Received ack");
+				//	byte[] ack = new byte[1016];
+				//	DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
+				//	serverSocket.receive(receiveAck);
+				//	System.out.println("Received ack");
+					byte[] ack = new byte[4];
+                                        DatagramPacket recAck = new DatagramPacket(ack, ack.length);
+                                        serverSocket.receive(recAck);
+                                        int ackNum = bytesToInt(ack);
+                                        System.out.println("received ack for sequence # " + ackNum);
 					acksReceived++;
 				}
 				
@@ -162,5 +176,13 @@ class Server
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
+	
 	}
+	  public static int bytesToInt( byte[] bytes) {
+                return bytes[3] & 0xFF |
+                        (bytes[2] & 0xFF) << 8 |
+                        (bytes[1] & 0xFF) << 16 |
+                        (bytes[0] & 0xFF) << 24;
+                }
+
 }
