@@ -22,28 +22,50 @@ class Server
 		try
 		{
 			DatagramSocket serverSocket = new DatagramSocket(portNum);
+			serverSocket.setSoTimeout(5000);
 			
 			while(true)
 			{
+			
+			//declare variables outside of ty statement to avoid scoping issue
+			int length = 0;
+			String fileToSend = null;
+			File myFile = null;
+			FileInputStream fis = null;
+			InetAddress ipAddress = null;
+			int portnumber = 0;
+			long fileSize = 0;
 				
 			//Receive message from client
-				byte[] receiveData = new byte[1024];
-				DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
-				serverSocket.receive(receivePacket);
-				String sentence = new String(receivePacket.getData());
-				System.out.println("");
-				System.out.println("From client: " + sentence);
+				System.out.print("Waiting for send call from client..");
+				while(true)
+				{
+					try
+					{
+						byte[] receiveData = new byte[1024];
+						DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
+						serverSocket.receive(receivePacket);
+						String sentence = new String(receivePacket.getData());
+						System.out.println("");
+						System.out.println("From client: " + sentence);
 				
-				int length = receivePacket.getLength();
-				String fileToSend = sentence.substring(5, length);
-				File myFile = new File(fileToSend);
-				FileInputStream fis = new FileInputStream(myFile);
-				InetAddress ipAddress = receivePacket.getAddress();
-				int portnumber = receivePacket.getPort();
+						length = receivePacket.getLength();
+						fileToSend = sentence.substring(5, length);
+						myFile = new File(fileToSend);
+						fis = new FileInputStream(myFile);
+						ipAddress = receivePacket.getAddress();
+						portnumber = receivePacket.getPort();
 				
 				
-				long fileSize = myFile.length();
-				//System.out.println("File size: " + fileSize);
+						fileSize = myFile.length();
+						//System.out.println("File size: " + fileSize);
+						break;
+					}
+					catch(SocketTimeoutException e)
+					{
+						System.out.print(".");
+					}
+				}
 				
 	
 			//Send file size to client
