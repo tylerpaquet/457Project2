@@ -3,7 +3,7 @@ import java.net.*;
 import java.nio.*;
 import java .nio.channels.*;
 
-class udpserver3
+class udpserver_timeout
 {
 	public static void main(String args[])
 	{
