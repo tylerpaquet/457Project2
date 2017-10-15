@@ -54,7 +54,7 @@ class Client
 					
 					
 				//Receive File Size from Server
-					byte[] receiveFileSize = new byte[1024];
+					byte[] receiveFileSize = new byte[1016];
 					DatagramPacket receiveFileSizePacket = new DatagramPacket(receiveFileSize, receiveFileSize.length);
 					clientSocket.receive(receiveFileSizePacket);
 					String fileSize = new String(receiveFileSizePacket.getData());
@@ -65,23 +65,28 @@ class Client
 					
 					
 				//receive file packets and save to a new file
-					int numPackets = ((int)fileSizeInt/1024) + 1;
-					int numBytesLastPacket = (int)fileSizeInt%1024;
+					int numPackets = ((int)fileSizeInt/1016) + 1;
+					int numBytesLastPacket = (int)fileSizeInt%1016;
 					//System.out.println("Number of packets = " + numPackets);
 					//System.out.println("Number of bytes in final packet = " + numBytesLastPacket);
 						
 					File file = new File("downloaded" + userInput.substring(5, userInput.length()));
 					FileOutputStream fos = new FileOutputStream(file);
+					
+					System.out.println("Will receive " + numPackets + " packets for entire file");
 						
 					for(int i = 0; i < numPackets; i++)
 					{
-						System.out.println("Receiving Packet #" + (i+1) + "/" + numPackets);
+						CustomPacket customPacket = null;
+						
 						if(i == numPackets - 1)
 						{
-							byte[] receiveData = new byte[numBytesLastPacket];								
+							byte[] receiveData = new byte[numBytesLastPacket + 8];								
 							DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 							clientSocket.receive(receivePacket);
-							fos.write(receiveData);
+							customPacket = new CustomPacket(receivePacket);
+							System.out.println("Receiving Packet #" + customPacket.getId());
+							fos.write(customPacket.getLastPacketData(numBytesLastPacket + 8));
 								
 						}
 						else
@@ -89,14 +94,17 @@ class Client
 							byte[] receiveData = new byte[1024];
 							DatagramPacket receivePacket = new DatagramPacket(receiveData, receiveData.length);
 							clientSocket.receive(receivePacket);
-							fos.write(receiveData);
+							customPacket = new CustomPacket(receivePacket);
+							System.out.println("Receiving Packet #" + customPacket.getId());
+							fos.write(customPacket.getPacketData());
 						}
+						
 							
 						String ackStr = "received packet"; 
 						byte[] ack = new byte[ackStr.length()];
 						ack = ackStr.getBytes();
 						DatagramPacket sendAck = new DatagramPacket(ack, ack.length, ipAddress, portNum);
-						System.out.println("Sending ack for packet #" + (i+1));
+						System.out.println("Sending ack for packet #" + customPacket.getId());
 						clientSocket.send(sendAck);
 							
 					}
