@@ -10,7 +10,6 @@ import java.io.*;
 import java.net.*;
 import java.nio.*;
 import java.nio.channels.*;
-import static java.lang.Math.toIntExact;
 
 class Server
 {
@@ -27,14 +26,14 @@ class Server
 			while(true)
 			{
 			
-			//declare variables outside of ty statement to avoid scoping issue
-			int length = 0;
-			String fileToSend = null;
-			File myFile = null;
-			FileInputStream fis = null;
-			InetAddress ipAddress = null;
-			int portnumber = 0;
-			long fileSize = 0;
+			//declare variables outside of try statement to avoid scoping issue
+				int length = 0;
+				String fileToSend = null;
+				File myFile = null;
+				FileInputStream fis = null;
+				InetAddress ipAddress = null;
+				int portnumber = 0;
+				long fileSize = 0;
 				
 			//Receive message from client
 				System.out.print("Waiting for send call from client..");
@@ -103,21 +102,15 @@ class Server
 						serverSocket.send(customPacket.packet);
 						packetsSent++;
 					}
-					/*
+					
 					byte[] ack = new byte[1016];
 					DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
 					serverSocket.receive(receiveAck);
-					System.out.println("Received ack");
+					String ackstring = new String(receiveAck.getData());
+					int ackstringlength = receiveAck.getLength();
+					String packNum = ackstring.substring(16, ackstringlength);
+					System.out.println("Received ack from packet #" + packNum);
 					acksReceived++;
-					*/
-					
-					byte[] ack = new byte[4];
-                                        DatagramPacket recAck = new DatagramPacket(ack, ack.length);
-                                        serverSocket.receive(recAck);
-                                        int ackNum = bytesToInt(ack);
-					System.out.println("received ack for sequence # " + ackNum);
-				
-				        acksReceived++;
 					
 					//if file was sent in 5 packets or less then ignore following if else
 					if(packetsSent == numPackets)
@@ -127,6 +120,7 @@ class Server
 					
 					if(packetsSent == numPackets - 1)
 					{
+						//sends last packet because it will contain difference amount of bytes
 						byte[] customData = new byte[numBytesLastPacket];
 						fis.read(customData);
 						byte[] sendData = new byte[numBytesLastPacket + 8];
@@ -138,6 +132,7 @@ class Server
 					}
 					else
 					{
+						//sends all other packets
 						byte[] customData = new byte[1016];
 						fis.read(customData);
 						byte[] sendData = new byte[1024];
@@ -154,15 +149,13 @@ class Server
 				//Consume extra acks
 				while(acksReceived < packetsSent)
 				{
-				//	byte[] ack = new byte[1016];
-				//	DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
-				//	serverSocket.receive(receiveAck);
-				//	System.out.println("Received ack");
-					byte[] ack = new byte[4];
-                                        DatagramPacket recAck = new DatagramPacket(ack, ack.length);
-                                        serverSocket.receive(recAck);
-                                        int ackNum = bytesToInt(ack);
-                                        System.out.println("received ack for sequence # " + ackNum);
+					byte[] ack = new byte[1016];
+					DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
+					serverSocket.receive(receiveAck);
+					String ackstring = new String(receiveAck.getData());
+					int ackstringlength = receiveAck.getLength();
+					String packNum = ackstring.substring(16, ackstringlength);
+					System.out.println("Received ack from packet #" + packNum);
 					acksReceived++;
 				}
 				
@@ -176,13 +169,5 @@ class Server
 			System.out.println(e.getMessage());
 			e.printStackTrace();
 		}
-	
 	}
-	  public static int bytesToInt( byte[] bytes) {
-                return bytes[3] & 0xFF |
-                        (bytes[2] & 0xFF) << 8 |
-                        (bytes[1] & 0xFF) << 16 |
-                        (bytes[0] & 0xFF) << 24;
-                }
-
 }
