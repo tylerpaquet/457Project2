@@ -125,10 +125,13 @@ class Client2
 								int i = ((customPacket.getId() % 4) + 1) % 4;
 								while(outOfOrder[i] != null)
 								{
+									System.out.println("Writing saved in order packets to file");
+									
 									//write all packets except last
 									if(outOfOrder[i].getId() != (numPackets - 1))
 									{
 										fos.write(outOfOrder[i].getPacketData());
+										System.out.println("Writing packet #" + outOfOrder[i].getId());
 										nextInOrder++;
 										
 										//free space in outOfOrder array for new outOfOrder packets
@@ -155,6 +158,7 @@ class Client2
 							else
 							{
 								outOfOrder[customPacket.getId() % 4] = customPacket;
+								System.out.println("Out of order. Adding packet # " + customPacket.getId() + " to outOfOrder array");
 							}
 						}
 					
