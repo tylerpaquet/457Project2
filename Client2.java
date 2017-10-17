@@ -77,7 +77,7 @@ class Client2
 					int[] receivedArray = new int[numPackets];
 					int packetsReceived = 0;
 					
-					CustomPacket[] outOfOrder = new CustomPacket[5];
+					CustomPacket[] outOfOrder = new CustomPacket[4];
 					int nextInOrder = 0;
 					
 					
@@ -122,7 +122,7 @@ class Client2
 								}
 								
 								//check for any stored in order packets following received packet
-								int i = ((customPacket.getId() % 5) + 1) % 5;
+								int i = ((customPacket.getId() % 4) + 1) % 4;
 								while(outOfOrder[i] != null)
 								{
 									//write all packets except last
@@ -134,8 +134,8 @@ class Client2
 										//free space in outOfOrder array for new outOfOrder packets
 										outOfOrder[i] = null;
 										
-										//increment index of array keeping it between 0-4 (cyclic ordering)
-										i = (i + 1) % 5;
+										//increment index of array keeping it between 0-3 (cyclic ordering)
+										i = (i + 1) % 4;
 									}
 									//writes last packet
 									else
@@ -147,14 +147,14 @@ class Client2
 										outOfOrder[i] = null;
 										
 										//increment index of array keeping it between 0-4 (cyclic ordering)
-										i = (i + 1) % 5;
+										i = (i + 1) % 4;
 									}
 								}
 							}
 							//out of order: add to outOfOrder array
 							else
 							{
-								outOfOrder[customPacket.getId() % 5] = customPacket;
+								outOfOrder[customPacket.getId() % 4] = customPacket;
 							}
 						}
 					

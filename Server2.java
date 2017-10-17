@@ -110,6 +110,7 @@ class Server2
 					}
 					
 					//ack loop. Stay in loop until front of window is acknowledged. Then break to send next packet
+					serverSocket.setSoTimeout(2000);
 					while(true)
 					{
 						//attempt to receive ack, if timeout then something needs resent
@@ -190,7 +191,7 @@ class Server2
 				}
 				
 				//Consume extra acks
-				serverSocket.setSoTimeout(2000);
+				//serverSocket.setSoTimeout(2000);
 				while(acksReceived < numPackets)
 				{
 					//attempt to receive ack, if timeout then something needs resent
