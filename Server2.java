@@ -209,7 +209,7 @@ class Server2
 						deliveredArray[packNumInt] = 1;
 						
 						//if frontOfWindow is confirmed delivered, update frontOfWindow, set temp data to null
-						if(deliveredArray[window[frontOfWindow] != null && deliveredArray[window[frontOfWindow].getId()] == 1)
+						if(window[frontOfWindow] != null && deliveredArray[window[frontOfWindow].getId()] == 1)
 						{
 							frontOfWindow = (frontOfWindow + 1) % 5;
 							window[packNumInt % 5] = null;
