@@ -161,17 +161,17 @@ class Server5
 							if(deliveredArray[frontOfWindowID] == 1)
 							{
 								System.out.println("Moving window..");
+								window[frontOfWindow] = null;
 								frontOfWindow = (frontOfWindow + 1) % 5;
 								frontOfWindowID++;
-								window[frontOfWindowID % 5] = null;
 								//window[frontOfWindow] = null;
 								
-								while(deliveredArray[frontOfWindowID + 1] == 1)
+								while(deliveredArray[frontOfWindowID] == 1)
 								{
 									System.out.println("Moving window..");
+									window[frontOfWindow] = null;
 									frontOfWindow = (frontOfWindow + 1) % 5;
 									frontOfWindowID++;
-									window[frontOfWindowID % 5] = null;
 									//window[frontOfWindow] = null;
 								}
 								
@@ -182,9 +182,9 @@ class Server5
 						//resend packet (frontOfWindow)
 						catch(SocketTimeoutException e)
 						{
-							//CustomPacket customPacket = window[frontOfWindow];
+							CustomPacket customPacket = window[frontOfWindow];
 							System.out.println("Resending packet #" + frontOfWindowID);
-							serverSocket.send(window[frontOfWindowID % 5].packet);
+							serverSocket.send(customPacket.packet);
 						}
 					}
 					
