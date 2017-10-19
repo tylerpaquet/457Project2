@@ -171,7 +171,7 @@ class Server5
 									System.out.println("Moving window..");
 									frontOfWindow = (frontOfWindow + 1) % 5;
 									frontOfWindowID++;
-									window[frontOfWindowID++ % 5] = null;
+									window[frontOfWindowID % 5] = null;
 									//window[frontOfWindow] = null;
 								}
 								
