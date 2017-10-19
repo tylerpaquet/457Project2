@@ -54,14 +54,23 @@ class Server5
 						fis = new FileInputStream(myFile);
 						ipAddress = receivePacket.getAddress();
 						portnumber = receivePacket.getPort();
+						
+						System.out.println("Received file send packet");
 				
 				
 						fileSize = myFile.length();
 						//System.out.println("File size: " + fileSize);
 						
-						/*
-						logic to send message ack
-						*/
+
+						//send ack for message
+						
+						String messageAckStr = "received file send call";
+						byte[] messageAck = new byte[messageAckStr.length()];
+						messageAck = messageAckStr.getBytes();
+						DatagramPacket messageSendAck = new DatagramPacket(messageAck, messageAck.length, ipAddress, portnumber);
+						System.out.println("Sending ack for file send packet");
+						serverSocket.send(messageSendAck);
+						
 						
 						break;
 					}
@@ -71,7 +80,9 @@ class Server5
 					}
 				}
 				
-	
+				System.out.println("");
+				
+			
 			//Send file size to client
 				//send file size packet
 				String fileSizeStr = Long.toString(fileSize);
@@ -79,10 +90,16 @@ class Server5
 				sendFileSize = fileSizeStr.getBytes();
 				DatagramPacket sendFileSizePacket = new DatagramPacket(sendFileSize, sendFileSize.length, ipAddress, portnumber);
 				serverSocket.send(sendFileSizePacket);
+				System.out.println("Sending file size packet");
 				
-				/*
-				logic to receive file size ack
-				*/
+				//receive file size ack
+				byte[] fileSizeData = new byte[1024];
+				DatagramPacket fileSizePacket = new DatagramPacket(fileSizeData, fileSizeData.length);
+				serverSocket.receive(fileSizePacket);
+				String fileSizeAckStr = new String(fileSizePacket.getData());
+				System.out.println("Received ack for file size");
+				
+				System.out.println("");
 				
 				
 			//Send file to client in packet sizes of 1024 bytes Sliding window of 5 packets
@@ -125,7 +142,7 @@ class Server5
 						//attempt to receive ack, if timeout then something needs resent
 						try
 						{
-							byte[] ack = new byte[1016];
+							byte[] ack = new byte[1024];
 							DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
 							serverSocket.receive(receiveAck);
 							String ackstring = new String(receiveAck.getData());
@@ -202,7 +219,7 @@ class Server5
 					//attempt to receive ack, if timeout then something needs resent
 					try
 					{
-						byte[] ack = new byte[1016];
+						byte[] ack = new byte[1024];
 						DatagramPacket receiveAck = new DatagramPacket(ack, ack.length);
 						serverSocket.receive(receiveAck);
 						String ackstring = new String(receiveAck.getData());

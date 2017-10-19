@@ -51,14 +51,22 @@ class Client5
 					sendData = userInput.getBytes();
 					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portNum);
 					clientSocket.send(sendPacket);
+					System.out.println("Sending file send packet");
 					
-					/*
-					logic to receive message ack
-					*/
+					serverSocket.setSoTimeout(2000);
+					//receive message ack
+					byte[] messageAck = new byte[1024];
+					DatagramPacket messageReceiveAck = new DatagramPacket(messageAck, messageAck.length);
+					clientSocket.receive(messageReceiveAck);
+					String messageAckString = new String(messageReceiveAck.getData());
+					System.out.println("Received ack from file send packet");
+					
+					System.out.println("");
+					
 					
 					
 				//Receive File Size from Server
-					byte[] receiveFileSize = new byte[1016];
+					byte[] receiveFileSize = new byte[1024];
 					DatagramPacket receiveFileSizePacket = new DatagramPacket(receiveFileSize, receiveFileSize.length);
 					clientSocket.receive(receiveFileSizePacket);
 					String fileSize = new String(receiveFileSizePacket.getData());
@@ -66,10 +74,17 @@ class Client5
 					String fileSize2 = fileSize.substring(0, length);
 					int fileSizeInt = Integer.parseInt(fileSize2);
 					//System.out.println("File size int: " + fileSizeInt); //prints file size in bytes
+					System.out.println("Received file size packet");
 					
-					/*
-					logic to send file size ack
-					*/
+					//send file size ack
+					String fileSizeStr = "received file size";
+					byte[] fileSizeData = new byte[userInput.length()];
+					fileSizeData = fileSizeStr.getBytes();
+					DatagramPacket fileSizePacket = new DatagramPacket(fileSizeData, fileSizeData.length, ipAddress, portNum);
+					clientSocket.send(fileSizePacket);
+					System.out.println("Sending ack for file size packet");
+					
+					System.out.println("");
 					
 					
 				//receive file packets and save to a new file
