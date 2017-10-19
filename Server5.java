@@ -136,7 +136,7 @@ class Server5
 					}
 					
 					//ack loop. Stay in loop until front of window is acknowledged. Then break to send next packet
-					serverSocket.setSoTimeout(2000);
+					serverSocket.setSoTimeout(3000);
 					while(true)
 					{
 						//attempt to receive ack, if timeout then something needs resent
@@ -172,7 +172,7 @@ class Server5
 						catch(SocketTimeoutException e)
 						{
 							CustomPacket customPacket = window[frontOfWindow];
-							System.out.println("Resending packet #" + customPacket.getId());
+							System.out.println("Resending packet #" + frontOfWindowID);
 							serverSocket.send(customPacket.packet);
 						}
 					}
