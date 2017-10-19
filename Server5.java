@@ -182,9 +182,9 @@ class Server5
 						//resend packet (frontOfWindow)
 						catch(SocketTimeoutException e)
 						{
-							CustomPacket customPacket = window[frontOfWindow];
+							//CustomPacket customPacket = window[frontOfWindow];
 							System.out.println("Resending packet #" + frontOfWindowID);
-							serverSocket.send(customPacket.packet);
+							serverSocket.send(window[frontOfWindowID % 5].packet);
 						}
 					}
 					
