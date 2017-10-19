@@ -163,16 +163,16 @@ class Server5
 								System.out.println("Moving window..");
 								frontOfWindow = (frontOfWindow + 1) % 5;
 								frontOfWindowID++;
-								//window[packNumInt % 5] = null;
-								window[frontOfWindow] = null;
+								window[packNumInt % 5] = null;
+								//window[frontOfWindow] = null;
 								
 								while(deliveredArray[frontOfWindowID + 1] == 1)
 								{
 									System.out.println("Moving window..");
 									frontOfWindow = (frontOfWindow + 1) % 5;
 									frontOfWindowID++;
-									//window[packNumInt % 5] = null;
-									window[frontOfWindow] = null;
+									window[packNumInt % 5] = null;
+									//window[frontOfWindow] = null;
 								}
 								
 								break;
