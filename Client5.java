@@ -53,7 +53,7 @@ class Client5
 					clientSocket.send(sendPacket);
 					System.out.println("Sending file send packet");
 					
-					serverSocket.setSoTimeout(2000);
+					//serverSocket.setSoTimeout(2000);
 					//receive message ack
 					byte[] messageAck = new byte[1024];
 					DatagramPacket messageReceiveAck = new DatagramPacket(messageAck, messageAck.length);
