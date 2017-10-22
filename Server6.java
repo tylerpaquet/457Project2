@@ -279,7 +279,6 @@ class Server6
 				
 				System.out.println("All packets have been sent");
 				System.out.println("");
-				break;
 				
 			}
 		}
