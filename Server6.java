@@ -13,34 +13,11 @@ import java.nio.channels.*;
 
 class Server6
 {
-	private static int getPort() {
-        int port = 0;
-        boolean valid = false;
-        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
-        System.out.println("Enter a port number: ");
-
-        while (!valid) {
-            try {
-                port = Integer.parseInt(input.readLine());
-                if (port > 1024 && port < 65536) {
-                    valid = true;
-                } else {
-                    System.out.println("Invalid Port. \nEnter a port number: ");
-                }
-            } catch (NumberFormatException e) {
-                System.out.println("Invalid Port. \nEnter a port number: ");
-            } catch (IOException e) {
-                System.out.println("Invalid Port. \nEnter a port number: ");
-            }
-        }
-        System.out.println("connecting to port: " + port);
-        return port;
-        }
 	public static void main(String args[])
 	{
-		//Console cons = System.console();
-		//int portNum = Integer.parseInt(cons.readLine("Enter a port number: "));
-		int portNum = getPort();
+		Console cons = System.console();
+		int portNum = Integer.parseInt(cons.readLine("Enter a port number: "));
+
 		try
 		{
 			DatagramSocket serverSocket = new DatagramSocket(portNum);
