@@ -12,12 +12,74 @@ import java.nio.*;
 import java.nio.channels.*;
 
 class Client6
-{
+{	
+	   private static String getIP() {
+        String ipAddr = "";
+        boolean validIPAddr = false;
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Enter an IP address: ");
+        while (validIPAddr == false) {
+            try {
+                ipAddr = input.readLine();
+                String[] pieces = ipAddr.split("\\.");
+
+                for (String s : pieces) {
+                    int i = Integer.parseInt(s);
+                    if ((i < 0) || i > 255) {
+                        System.out.println("IP address parts cannot be smaller than 0 or larger than 255. \nEnter an IP Address: ");
+                        break;
+                    }
+                }
+
+                if (ipAddr == null || ipAddr.isEmpty()) {
+                    System.out.println("IP address is empty. \nEnter an IP Address: ");
+                } else if (pieces.length != 4) {
+                    System.out.println("IP address does not contain correct number of parts. \nEnter an IP Address: ");
+                } else if (ipAddr.endsWith(".")) {
+                    System.out.println("IP addresses cannot end with a period. \nEnter an IP Address: ");
+                } else {
+                    validIPAddr = true;
+                }
+
+
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid IP. \nEnter an IP address: ");
+            } catch (IOException e) {
+                System.out.println("Invalid IP. \nEnter an IP address: ");
+            }
+        }
+        return ipAddr;
+    }
+	private static int getPort() {
+        int port = 0;
+        boolean valid = false;
+        BufferedReader input = new BufferedReader(new InputStreamReader(System.in));
+        System.out.println("Enter a port number: ");
+
+        while (!valid) {
+            try {
+                port = Integer.parseInt(input.readLine());
+                if (port > 1024 && port < 65536) {
+                    valid = true;
+                } else {
+                    System.out.println("Invalid Port. \nEnter a port number: ");
+                }
+            } catch (NumberFormatException e) {
+                System.out.println("Invalid Port. \nEnter a port number: ");
+            } catch (IOException e) {
+                System.out.println("Invalid Port. \nEnter a port number: ");
+            }
+        }
+        System.out.println("connecting to port: " + port);
+        return port;
+    }
 	public static void main(String args[])
 	{
-		Console cons = System.console();
-		int portNum = Integer.parseInt(cons.readLine("Enter a port number: "));
-		String ipAddr = cons.readLine("Enter an IP address: ");
+		//Console cons = System.console();
+		//int portNum = Integer.parseInt(cons.readLine("Enter a port number: "));
+		//String ipAddr = cons.readLine("Enter an IP address: ");
+		int portNum = getPort();
+		String ipAddr = getIP();
 		
 		try
 		{
