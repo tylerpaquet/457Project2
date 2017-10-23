@@ -1,7 +1,7 @@
 /*
 *
 *	Tyler Paquet & John Marker
-*	Project 3 Server
+*	Project 2 Server
 *	Due: 10/16/2017
 *
 */
