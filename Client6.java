@@ -180,6 +180,9 @@ class Client6
 							}
 						}
 						
+						if(deliveredArray[deliveredArray.length-1] ==1) {
+							break;
+						}
 						//send ack	
 						String ackStr = "received packet " + customPacket.getId();
 						byte[] ack = new byte[ackStr.length()];
