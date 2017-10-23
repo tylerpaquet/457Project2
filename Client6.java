@@ -1,7 +1,7 @@
 /*
 *
 *	Tyler Paquet & John Marker
-*	Project 3 Client
+*	Project 2 Client
 *	Due: 10/16/2017
 *
 */
@@ -46,7 +46,7 @@ class Client6
 				else if(userInput.substring(0, 4).toLowerCase().equals("send"))
 				{
 					
-				//Send file request to server
+					//Send file request to server
 					byte[] sendData = new byte[userInput.length()];
 					sendData = userInput.getBytes();
 					DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, ipAddress, portNum);
@@ -65,7 +65,7 @@ class Client6
 					
 					
 					
-				//Receive File Size from Server
+					//Receive File Size from Server
 					byte[] receiveFileSize = new byte[1024];
 					DatagramPacket receiveFileSizePacket = new DatagramPacket(receiveFileSize, receiveFileSize.length);
 					clientSocket.receive(receiveFileSizePacket);
@@ -87,17 +87,12 @@ class Client6
 					System.out.println("");
 					
 					
-				//receive file packets and save to a new file
+					//receive file packets and save to a new file
 					int numPackets = ((int)fileSizeInt/1016) + 1;
-					int numBytesLastPacket = (int)fileSizeInt%1016;
-					//System.out.println("Number of packets = " + numPackets);
-					//System.out.println("Number of bytes in final packet = " + numBytesLastPacket);
-						
+					int numBytesLastPacket = (int)fileSizeInt%1016;	
 					File file = new File("downloaded" + userInput.substring(5, userInput.length()));
 					FileOutputStream fos = new FileOutputStream(file);
-					
 					System.out.println("Will receive " + numPackets + " packets for entire file");
-					
 					int packetsReceived = 0;
 					int[] deliveredArray = new int[numPackets];
 					int nextInOrder = 0;
