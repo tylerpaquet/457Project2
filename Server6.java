@@ -34,7 +34,7 @@ class Server6
 				int portnumber = 0;
 				long fileSize = 0;
 				
-			//Receive message from client
+				//Receive message from client
 				serverSocket.setSoTimeout(5000);
 				System.out.print("Waiting for send call from client..");
 				while(true)
@@ -53,25 +53,16 @@ class Server6
 						myFile = new File(fileToSend);
 						fis = new FileInputStream(myFile);
 						ipAddress = receivePacket.getAddress();
-						portnumber = receivePacket.getPort();
-						
+						portnumber = receivePacket.getPort();					
 						System.out.println("Received file send packet");
-				
-				
 						fileSize = myFile.length();
-						//System.out.println("File size: " + fileSize);
-						
-
 						//send ack for message
-						
 						String messageAckStr = "received file send call";
 						byte[] messageAck = new byte[messageAckStr.length()];
 						messageAck = messageAckStr.getBytes();
 						DatagramPacket messageSendAck = new DatagramPacket(messageAck, messageAck.length, ipAddress, portnumber);
 						System.out.println("Sending ack for file send packet");
 						serverSocket.send(messageSendAck);
-						
-						
 						break;
 					}
 					catch(SocketTimeoutException e)
@@ -81,9 +72,8 @@ class Server6
 				}
 				
 				System.out.println("");
-				
-			
-			//Send file size to client
+
+				//Send file size to client
 				//send file size packet
 				String fileSizeStr = Long.toString(fileSize);
 				byte[] sendFileSize = new byte[fileSizeStr.length()];
@@ -98,11 +88,10 @@ class Server6
 				serverSocket.receive(fileSizePacket);
 				String fileSizeAckStr = new String(fileSizePacket.getData());
 				System.out.println("Received ack for file size");
-				
 				System.out.println("");
 				
 				
-			//Send file to client in packet sizes of 1024 bytes Sliding window of 5 packets
+				//Send file to client in packet sizes of 1024 bytes Sliding window of 5 packets
 				
 				int numPackets = ((int)fileSize/1016) + 1;
 				int numBytesLastPacket = (int)fileSize%1016;
@@ -275,11 +264,9 @@ class Server6
 							}
 						}
 					}
-				}
-				
+				}	
 				System.out.println("All packets have been sent");
-				System.out.println("");
-				
+				System.out.println("");			
 			}
 		}
 		catch(IOException e)
